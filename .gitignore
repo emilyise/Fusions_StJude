@@ -9,6 +9,7 @@
 SAMPLE_INFO.csv
 STJude26_sample_input.csv
 get_data.sh
+/tmp/
 
 # Results 
 /backres/
