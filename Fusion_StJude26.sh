@@ -2,8 +2,8 @@
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=32
-#SBATCH --mem=200G
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=20G
 #SBATCH --job-name="STJUDE_FUSIONS"
 #SBATCH --output=Fusion_StJude26.out
 #SBATCH --mail-user=emilyise@buffalo.edu
@@ -31,19 +31,11 @@ OUTDIR="${P_DIR}/results/"
 ###############################################################################
 ############ CREATE DIRECTORIES ###############################################
 
-mkdir -p $P_DIR
-mkdir -p $P_DIR/work
-mkdir -p $P_DIR/tmp
-mkdir -p $P_DIR/apptainer_cache
-mkdir -p $OUTDIR
-
-###############################################################################
-############ MOVE TEMP STUFF TO SCRATCH #######################################
-
-export NXF_WORK=$P_DIR/work
-export NXF_TEMP=$P_DIR/tmp
-export TMPDIR=$P_DIR/tmp
-export TEMP=$P_DIR/tmp
+mkdir -p "$P_DIR"
+mkdir -p "$P_DIR/work"
+mkdir -p "$P_DIR/tmp"
+mkdir -p "$P_DIR/apptainer_cache"
+mkdir -p "$OUTDIR"
 
 export NXF_APPTAINER_CACHEDIR=$P_DIR/apptainer_cache
 
@@ -61,7 +53,7 @@ module load nextflow
 ###############################################################################
 ############ RUN PIPELINE #####################################################
 
-cd $P_DIR
+cd "$P_DIR"
 
 echo "Sample sheet: $SHEET"
 echo "Output directory: $OUTDIR"
