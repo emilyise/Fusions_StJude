@@ -13,3 +13,4 @@ get_data.sh
 /results/
 *.log
 *.out
+**/work/
