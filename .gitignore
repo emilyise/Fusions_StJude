@@ -11,4 +11,5 @@ get_data.sh
 # Results 
 /backres/
 /results/
-Fusion_StJude26.out
+*.log
+*.out
