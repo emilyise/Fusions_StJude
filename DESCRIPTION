@@ -1,0 +1,3 @@
+Description: In this project, BAM files from the St Jude Cloud are converted 
+    to fastq files and run through the nf-core/rnafusion pipeline. Utilizes 
+    some custom configs for slurm execution on CCR. 
