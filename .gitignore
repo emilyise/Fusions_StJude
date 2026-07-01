@@ -1,0 +1,14 @@
+# Accessory
+/Picard_Metrics/
+
+# Data 
+/BAMS/
+/BAMS2/
+SAMPLE_INFO.csv
+STJude26_sample_input.csv
+get_data.sh
+
+# Results 
+/backres/
+/results/
+Fusion_StJude26.out
