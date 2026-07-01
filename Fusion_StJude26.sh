@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=24:00:00
+#SBATCH --time=48:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
@@ -8,8 +8,8 @@
 #SBATCH --output=Fusion_StJude26.out
 #SBATCH --mail-user=emilyise@buffalo.edu
 #SBATCH --mail-type=ALL
-#SBATCH --partition=general-compute
-#SBATCH --qos=general-compute
+#SBATCH --partition=scavenger
+#SBATCH --qos=scavenger
 
 set -euo pipefail
 
@@ -66,7 +66,8 @@ nextflow run nf-core/rnafusion \
     --genomes_base "$R_DIR" \
     --outdir "$OUTDIR" \
     -work-dir "$P_DIR/work" \
-    -c "$P_DIR/custom.config"
+    -c "$P_DIR/custom.config" \
+    -resume 5c2d58c8-dc0a-401b-9dcc-b17003c569f1
 
 
 ###############################################################################
