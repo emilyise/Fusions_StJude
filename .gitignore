@@ -1,5 +1,7 @@
 # Accessory
 /Picard_Metrics/
+.nextflow
+/apptainer_cache/
 
 # Data 
 /BAMS/
@@ -11,6 +13,6 @@ get_data.sh
 # Results 
 /backres/
 /results/
-*.log
+*.log*
 *.out
 **/work/
