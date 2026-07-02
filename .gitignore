@@ -12,7 +12,6 @@ get_data.sh
 /tmp/
 
 # Results 
-/backres/
 /results/
 *.log*
 *.out
