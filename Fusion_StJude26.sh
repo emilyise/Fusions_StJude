@@ -26,7 +26,7 @@ SHEET="${P_DIR}/STJude26_sample_input.csv"
 R_DIR="/vscratch/grp-joyceohm/NF_RNAFusion_Refs/"
 
 # Final output location
-OUTDIR="${P_DIR}/results/"
+OUTDIR="${P_DIR}/results2/"
 
 ###############################################################################
 ############ CREATE DIRECTORIES ###############################################
@@ -67,7 +67,7 @@ nextflow run nf-core/rnafusion \
     --outdir "$OUTDIR" \
     -work-dir "$P_DIR/work" \
     -c "$P_DIR/custom.config" \
-    -resume 5c2d58c8-dc0a-401b-9dcc-b17003c569f1
+    -resume 40bd4cf1-fbdc-411b-9c26-3edf26b50e3a
 
 
 ###############################################################################

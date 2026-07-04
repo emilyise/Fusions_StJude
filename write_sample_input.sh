@@ -5,7 +5,7 @@
 # THIS SCRIPT WAS PRIMARILY GENERATED WITH CHATGPT (I am occasionally very lazy)
 
 # Set directory
-P_DIR="/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/BAMS2"
+P_DIR="/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/BAMS"
 cd $P_DIR
 
 # Output CSV file
