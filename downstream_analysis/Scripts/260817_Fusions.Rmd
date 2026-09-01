@@ -1,0 +1,261 @@
+---
+title: "Reciprocal_Fusions"
+output: html_document
+date: "2026-08-17"
+---
+
+
+```{r Setup}
+set.seed(5014)
+
+###############################
+# Loading Libraries
+###############################
+library(ggplot2)
+library(tidyverse)
+library(magrittr)
+library(data.table)
+
+###############################
+# Loading Files 
+###############################
+# load metadata
+mymeta <- read.csv("../../SAMPLE_INFO.csv")
+
+mymeta %<>%
+  # subset to RNA-seq
+  filter(sequencing_type == "RNA-Seq") %>%
+  # subset to Ewing 
+  filter(sj_long_disease_name == "Ewing Sarcoma") %>%
+  # BAMs 
+  filter(file_type == "BAM")
+
+# how many unique ids do I have
+length(unique(mymeta$subject_name))
+
+# and unique patients 
+p.meta <- mymeta %>%
+  filter_out(sample_type == "Xenograft")
+
+length(unique(p.meta$subject_name))
+
+# get sample names to pull files 
+ews_sample_ids <- unique(p.meta$sample_name)
+
+#####
+# get arriba fusion files
+a.fus <- c(list.files("../../results/arriba/", full.names = T), 
+           c(list.files("../../results2/arriba/", full.names = T)))
+
+a.fus <- a.fus[-c(grep("discarded", a.fus))]
+all.a.fus <- unlist(lapply(a.fus, function(x) {
+  foo <- strsplit(x, "\\.")[[1]][5]
+  bar <- strsplit(foo, "//")[[1]][2]
+  bar}))
+
+## subset to arriba ews results
+ews.a.fus <- which(all.a.fus %in% ews_sample_ids)
+ews.a.fus <- a.fus[ews.a.fus]
+
+## read files
+ar.list <- lapply(ews.a.fus, function(x) read.delim(x))
+ids <- unlist(lapply(ews.a.fus, function(x) {
+  foo <- strsplit(x, "\\.")[[1]][5]
+  bar <- strsplit(foo, "//")[[1]][2]
+  bar}))
+names(ar.list) <- ids
+
+#####
+# get starfusion files 
+s.fus <- c(list.files("../../results/starfusion/", full.names = T), 
+           c(list.files("../../results2/starfusion/", full.names = T)))
+
+s.fus <- s.fus[c(grep("abridged", s.fus))]
+all.s.fus <- unlist(lapply(s.fus, function(x) {
+  foo <- strsplit(x, "\\.")[[1]][5]
+  bar <- strsplit(foo, "//")[[1]][2]
+  bar}))
+
+## subset to star fusion ews results
+ews.s.fus <- which(all.s.fus %in% ews_sample_ids)
+ews.s.fus <- s.fus[ews.s.fus]
+
+## read files
+sr.list <- lapply(ews.s.fus, function(x) read.delim(x))
+ids <- unlist(lapply(ews.s.fus, function(x) {
+  foo <- strsplit(x, "\\.")[[1]][5]
+  bar <- strsplit(foo, "//")[[1]][2]
+  bar}))
+names(sr.list) <- ids
+
+###############################
+# Set Colors
+###############################
+cols_recip <- "firebrick"
+cols_can <- "steelblue"
+```
+
+
+```{r Identify Recips}
+###############################
+# Arriba - Find Reciprocals
+###############################
+# make into one df
+ar.df <- rbindlist(ar.list, idcol = "SampleID") %>%
+  rename(gene1 = X.gene1)
+
+# align pid to ar.df
+a.meta <- mymeta %>%
+  select(subject_name, sample_name) %>%
+  distinct()
+
+# these are our reciprocal pairs 
+ar.df %<>%
+  group_by(SampleID) %>%
+  mutate(has_recip = paste(gene1, gene2) %in% paste(gene2, gene1) 
+         & gene1 != gene2) %>%
+  ungroup() %>%
+  rename(sample_name = SampleID)
+
+ar.df <- left_join(ar.df, a.meta, "sample_name")
+
+a.pairs <- ar.df %>%
+  filter(has_recip == T)
+
+a.pairs.sum <- a.pairs %>%
+  group_by(sample_name) %>%
+  summarise(total_fusions = n(),
+            recips = sum(has_recip),
+            .groups = "drop") %>%
+  mutate(non_recips = total_fusions - recips) %>%
+  ungroup()
+
+ews.a.pairs <- a.pairs %>% 
+  filter(gene1 == "EWSR1" | gene2 == "EWSR1")
+
+# how many patients have recip
+length(unique(unlist(lapply(ews.a.pairs$sample_name, 
+                            function(x) str_split_1(x, "_")[[1]][1]))))
+```
+
+
+```{r}
+###############################
+# Some Kind of Fusion Plot 
+###############################
+# reciprocal EwS - get spanning reads for forward and recips (using arriba)
+## check that each patient has a diagnostic fusion (FLI1/ERG)
+just.e.fus <- ar.df %>%
+  filter(gene1 %in% c("EWSR1", "ERG", "FLI1", "FEV") == T) %>%
+  filter(gene2 %in% c("EWSR1", "ERG", "FLI1", "FEV") == T) 
+
+## one patient doesn't have a fusion transcript... we're going to leave it out 
+# no.ews <- unique(ar.df$pid)[which(!unique(ar.df$pid) %in%
+#                                      unique(just.e.fus$pid))]
+# no.ews <- ar.df %>%
+#   filter(pid %in% no.ews == T)
+
+## sum raw reads 
+just.e.fus %<>%
+  mutate(t.reads = split_reads1 + split_reads2 + discordant_mates) %>%
+  select(sample_name, gene1, gene2, has_recip, t.reads, subject_name) %>%
+  group_by(sample_name) %>%
+  # total reads for each sample
+  mutate(s.reads = sum(t.reads)) %>%
+  # calculate reciprocal reads for each sample 
+  mutate(r.reads = sum(t.reads[which(gene1 == "FLI1")])) %>%
+  # should I take the mean then for each patient? idk yet 
+  ungroup()
+
+# looking for patients that have multiple samples in this dataset
+# because I should probably consolidate them for the first plot
+check <- just.e.fus %>%
+  select(sample_name, subject_name)
+sum(duplicated(unique(check)$subject_name))
+
+# lets get the mean s.reads and r.reads for each sample_name and subject_name 
+# combination... 
+plot.df <- just.e.fus %>%
+  select(sample_name, subject_name, s.reads, r.reads, has_recip) %>%
+  # get only unique combos (this is possible because r.reads and s.reads are 
+  # already summarized data)
+  unique() %>%
+  group_by(subject_name) %>%
+  # summarize further by grouping by subject and taking the mean, so that 
+  # patients with multiple samples aren't over represented
+  mutate(mr.reads = mean(r.reads),
+         ms.reads = mean(s.reads)) %>%
+  ungroup() %>%
+  # then go in and rm the extra data to make sure to plot the right thing 
+  select(-c(s.reads, r.reads, sample_name, has_recip)) %>%
+  unique() %>%
+  arrange(desc(ms.reads)) %>%
+  mutate(subject_name = factor(subject_name, levels = subject_name))
+
+# pulled double bar plot code from my other fusion figures (STS data)
+ggplot(data = plot.df, aes(y = subject_name, 
+                           fill = has_recip)) +
+  geom_col(aes(x = ms.reads), fill = cols_can) +
+  geom_col(aes(x = mr.reads), fill = cols_recip) + 
+  xlab("Fusion Count") +
+  ylab("") +
+  ggtitle("Average Canonical & Reciprocal Fusions per Patient") +
+  theme_bw() + 
+  theme(strip.placement = "outside",
+        strip.background = element_rect(fill = NA, color = "white"),
+    strip.text.y.left = element_text(angle = 0, hjust = 1, vjust = 0.5, 
+                                     margin = margin(r = 5)),
+      axis.text.y = element_blank())
+
+# # also considering looking at this without summarizing each patient and 
+# # faceting on stage (D, R, A, X even maybe)
+# ggplot(data = plot.df, aes(y = sample_name, 
+#                            fill = has_recip)) +
+#   geom_col(aes(x = total_fusions, fill = Tumor.subtype)) +
+#   geom_col(aes(x = recips), fill = "grey30") + 
+#   facet_grid(Tumor.subtype ~. , scales = "free_y", space = "free_y", switch = "y") +
+#   scale_fill_manual(name = "Sarcoma Subtypes", values = coldex$colors,
+#                      guide = "none") +
+#   xlab("Fusion Count") +
+#   ylab("") +
+#   ggtitle("Reciprocal Pairs vs Total Fusions per Patient by Tumor Subtype") +
+#   theme_bw() + 
+#   theme(strip.placement = "outside",
+#         strip.background = element_rect(fill = NA, color = "white"),
+#     strip.text.y.left = element_text(angle = 0, hjust = 1, vjust = 0.5, 
+#                                      margin = margin(r = 5)),
+#       axis.text.y = element_blank())
+```
+
+
+```{r}
+###############################
+# Recip Patients & Clinical Outcomes
+###############################
+# age at diagnosis 
+
+
+# sex 
+
+
+# expression at time points (diagnosis, relapse, autopsy) 
+
+
+# compare PDX expression to the patients 
+## reciprocal gets upregulated in the PDX
+## let's look at it 
+
+
+```
+
+
+```{r}
+###############################
+# Recip Patients & Transcriptional Program
+###############################
+
+
+
+```
+
+

@@ -10,6 +10,7 @@ SAMPLE_INFO.csv
 STJude26_sample_input.csv
 get_data.sh
 /tmp/
+/downstream_analysis/Figures/
 
 # Results 
 /results*/
