@@ -4,16 +4,19 @@
 /apptainer_cache/
 
 # Data 
-/BAMS/
-/BAMS2/
+*BAMS
+*BAMS2
 SAMPLE_INFO.csv
 STJude26_sample_input.csv
 get_data.sh
 /tmp/
 /downstream_analysis/Figures/
+*.txt
+*chunks*
 
 # Results 
-/results*/
+*/results*/
 *.log*
 *.out
 **/work/
+*logs*
