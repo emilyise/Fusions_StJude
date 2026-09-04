@@ -2,7 +2,7 @@
 
 ###################################################
 ## PATHS ##
-P_DIR=/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude
+P_DIR=/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion
 LOGDIR=$P_DIR/logs
 
 mkdir -p "$LOGDIR"
@@ -11,7 +11,7 @@ cd "$P_DIR"
 
 ###################################################
 ## SPLIT BAM LIST ##
-CHUNK_SIZE=50
+CHUNK_SIZE=10
 
 split -l $CHUNK_SIZE bam_sorted.txt chunks_sorted_
 
