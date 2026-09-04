@@ -13,11 +13,13 @@
 
 ###################################################
 ## SET UP ##
-cd /projects/rpci/joyceohm/Emily/2026_Fusions_WGS_St_Jude/BAMS
+cd /projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion/BAMS
 
 echo "loading modules" 
 module load gcc/11.2.0
 module load samtools/1.16.1
+
+mkdir ../BAMS_SORTED
 
 ###################################################
 ## GET FILES ##
@@ -30,4 +32,8 @@ echo "Processing $file"
 ## SORTING ##
 samtools sort -n -@ 8 \
     -o "${file%.bam}.name_sorted.bam" \
-    "$file"
+    "$file" ||
+## MOVE WHEN COMPLETE
+    mv "${file%.bam}.name_sorted.bam" ../BAMS_SORTED ||
+## TELL ME ABT IT 
+    echo "done gg" 

@@ -2,7 +2,7 @@
 
 ###################################################
 ## PATHS ##
-P_DIR=/projects/rpci/joyceohm/Emily/2026_Fusions_WGS_St_Jude
+P_DIR=/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion
 LOGDIR=$P_DIR/logs
 
 mkdir -p "$LOGDIR"
