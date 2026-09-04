@@ -32,8 +32,8 @@ echo "Processing $file"
 ## SORTING ##
 samtools sort -n -@ 8 \
     -o "${file%.bam}.name_sorted.bam" \
-    "$file" ||
+    "$file" &&
 ## MOVE WHEN COMPLETE
-    mv "${file%.bam}.name_sorted.bam" ../BAMS_SORTED ||
+    mv "${file%.bam}.name_sorted.bam" ../BAMS_SORTED &&
 ## TELL ME ABT IT 
     echo "done gg" 
