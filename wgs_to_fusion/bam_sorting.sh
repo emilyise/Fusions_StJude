@@ -19,8 +19,6 @@ echo "loading modules"
 module load gcc/11.2.0
 module load samtools/1.16.1
 
-mkdir ../BAMS_SORTED
-
 ###################################################
 ## GET FILES ##
 CHUNK=$1
