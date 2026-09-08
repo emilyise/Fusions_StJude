@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=16G
+#SBATCH --mem=32G
 #SBATCH --job-name="bam_sorting"
 #SBATCH --output=logs/bam_sorting_%A_%a.out
 #SBATCH --mail-user=emilyise@buffalo.edu

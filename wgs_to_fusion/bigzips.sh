@@ -3,7 +3,7 @@
 #SBATCH --output=bigzips_%j.out
 #SBATCH --time=12:00:00
 #SBATCH --cpus-per-task=28
-#SBATCH --mem=32G
+#SBATCH --mem=64G
 #SBATCH --mail-user=emilyise@buffalo.edu
 #SBATCH --mail-type=ALL
 #SBATCH --partition=scavenger
