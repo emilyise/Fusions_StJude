@@ -30,6 +30,6 @@ echo "Processing $file"
 ## SORTING ##
 samtools sort -n -@ 8 \
     -o "${file%.bam}.name_sorted.bam" \
-    "$file" &&
-    mv "$file" ../SORTED &&
-    echo "sort complete"
+    "$file"
+
+echo "sort complete"
