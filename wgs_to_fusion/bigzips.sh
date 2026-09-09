@@ -14,7 +14,7 @@ module load gcccore/11.2.0
 module load pigz
 
 # Directory containing FASTQs
-FASTQ_DIR=/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion/BAMS
+FASTQ_DIR=/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion/BAMS2
 
 # Compress all uncompressed FASTQs using 28 threads total
 
