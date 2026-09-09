@@ -11,7 +11,7 @@
 
 ###################################################
 ## SET UP ##
-cd /projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion/BAMS
+cd /projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion/BAMS2
 
 module load gcc/11.2.0
 module load bedtools
