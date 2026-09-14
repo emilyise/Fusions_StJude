@@ -4,7 +4,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=20G
-#SBATCH --job-name="STJUDE_FUSIONS"
+#SBATCH --job-name="STJUDE_WGS"
 #SBATCH --output=Fusion_StJude26.out
 #SBATCH --mail-user=emilyise@buffalo.edu
 #SBATCH --mail-type=ALL
@@ -20,13 +20,10 @@ set -euo pipefail
 P_DIR="/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion"
 
 # Batch sample sheet
-SHEET="${P_DIR}/STJude26_sample_input.csv"
-
-# References
-R_DIR="/vscratch/grp-joyceohm/NF_RNAFusion_Refs/"
+SHEET="${P_DIR}/STJude26_wgs_sample_input.csv"
 
 # Final output location
-OUTDIR="${P_DIR}/results2/"
+OUTDIR="${P_DIR}/results/"
 
 ###############################################################################
 ############ CREATE DIRECTORIES ###############################################
@@ -58,21 +55,18 @@ cd "$P_DIR"
 echo "Sample sheet: $SHEET"
 echo "Output directory: $OUTDIR"
 
-nextflow run nf-core/rnafusion \
-    -r 4.1.0 \
+nextflow run nf-core/sarek \
+    -r 3.10.0 \
     -profile apptainer \
-    --tools "arriba,starfusion" \
     --input $SHEET \
-    --genomes_base "$R_DIR" \
     --outdir "$OUTDIR" \
+    --genome GATK.GRCh38 \
+    --tools "Manta" \
     -work-dir "$P_DIR/work" \
-    -c "$P_DIR/custom.config" \
-    -resume 40bd4cf1-fbdc-411b-9c26-3edf26b50e3a
-
+    -c "$P_DIR/custom.config"
 
 ###############################################################################
 ############ OPTIONAL CLEANUP #################################################
 
 # ONLY after successful completion + output verification
 # rm -rf $P_DIR/work
-
