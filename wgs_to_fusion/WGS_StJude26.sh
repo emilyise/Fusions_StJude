@@ -17,7 +17,7 @@ set -euo pipefail
 ############ DEFINE DIRECTORIES ###############################################
 
 # Permanent storage
-P_DIR="/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude"
+P_DIR="/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion"
 
 # Batch sample sheet
 SHEET="${P_DIR}/STJude26_sample_input.csv"
