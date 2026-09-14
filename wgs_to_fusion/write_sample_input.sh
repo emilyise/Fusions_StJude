@@ -9,7 +9,7 @@ P_DIR="/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion/BAMS"
 cd $P_DIR
 
 # Output CSV file
-output="${P_DIR}/STJude26_sample_input.csv"
+output="${P_DIR}/../STJude26_sample_input.csv"
 
 # Write header
 echo "patient,sample,lane,fastq_1,fastq_2" > "$output"
@@ -31,7 +31,7 @@ for r1_file in *.RNA-Seq.bam.end1.fq.gz; do
         r2_full="${P_DIR}/${r2_file}"
 
         # Write to CSV
-        echo "${sample},${r1_full},${r2_full},reverse" >> "$output"
+        echo "${patient},${sample},lane_1,${r1_full},${r2_full}" >> "$output"
 
     else
         echo "Missing pair for ${sample}"
