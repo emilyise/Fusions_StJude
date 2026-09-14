@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=48:00:00
+#SBATCH --time=1:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
@@ -8,8 +8,8 @@
 #SBATCH --output=Fusion_StJude26.out
 #SBATCH --mail-user=emilyise@buffalo.edu
 #SBATCH --mail-type=ALL
-#SBATCH --partition=scavenger
-#SBATCH --qos=scavenger
+#SBATCH --partition=debug
+#SBATCH --qos=debug
 
 set -euo pipefail
 
