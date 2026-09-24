@@ -55,8 +55,8 @@ cd "$P_DIR"
 echo "Sample sheet: $SHEET"
 echo "Output directory: $OUTDIR"
 
-nextflow run nf-core/sarek \
-    -r 3.10.0 \
+nextflow run http://github.com/nf-core/sarek \
+    -r 26.04.6 \
     -profile apptainer \
     --input $SHEET \
     --outdir "$OUTDIR" \
