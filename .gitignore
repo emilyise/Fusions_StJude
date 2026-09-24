@@ -2,6 +2,7 @@
 /Picard_Metrics/
 .nextflow
 /apptainer_cache/
+/easybuild/
 
 # Data 
 *BAMS

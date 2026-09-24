@@ -38,14 +38,14 @@ export NXF_APPTAINER_CACHEDIR=$P_DIR/apptainer_cache
 
 ###############################################################################
 ############ SET JAVA #########################################################
-
-export JAVA_HOME=/projects/rpci/joyceohm/jdk-24.0.2
+export JAVA_HOME=/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/easybuild/software/Core/java/25.36
 export PATH=$JAVA_HOME/bin:$PATH
 
 ###############################################################################
 ############ LOAD MODULES #####################################################
-
-module load nextflow
+module use /projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/easybuild/software/modules
+module load Core/nextflow/26.04.6
+nextflow -version
 
 ###############################################################################
 ############ RUN PIPELINE #####################################################
