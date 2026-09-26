@@ -32,7 +32,7 @@ for r1_file in *.WholeGenome.end1.fq.gz; do
         r2_full="${P_DIR}/${r2_file}"
 
         # Write to CSV
-        echo "${patient},${bar},lane_1,${r1_full},${r2_full}" >> "$output"
+        echo "${patient},${sample},lane_1,${r1_full},${r2_full}" >> "$output"
 
     else
         echo "Missing pair for ${sample}"
