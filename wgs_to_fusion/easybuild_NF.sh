@@ -24,7 +24,7 @@ export JAVA_HOME=/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/easybuild/so
 export PATH=$JAVA_HOME/bin:$PATH
 
 # build nextflow
-## change the Nextflow .eb file to Java 25.36 instead of 25 before running 
+## change the Nextflow .eb file to Core/Java/25.36 instead of 25 before running 
 ## dependencies = [('Java', '25.36')]
 eb ${P_DIR}/easybuild/Nextflow-26.04.6.eb \
     --robot-paths=${P_DIR}/easybuild \

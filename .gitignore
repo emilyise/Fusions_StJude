@@ -1,7 +1,7 @@
 # Accessory
 /Picard_Metrics/
 .nextflow
-/apptainer_cache/
+*apptainer_cache*
 /easybuild/
 
 # Data 

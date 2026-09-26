@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=20G
 #SBATCH --job-name="STJUDE_WGS"
-#SBATCH --output=Fusion_StJude26.out
+#SBATCH --output=WGS_StJude26.out
 #SBATCH --mail-user=emilyise@buffalo.edu
 #SBATCH --mail-type=ALL
 #SBATCH --partition=debug
@@ -18,6 +18,9 @@ set -euo pipefail
 
 # Permanent storage
 P_DIR="/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion"
+
+# Reference storage 
+R_DIR="/vscratch/grp-joyceohm/igenomes"
 
 # Batch sample sheet
 SHEET="${P_DIR}/STJude26_wgs_sample_input.csv"
@@ -55,13 +58,14 @@ cd "$P_DIR"
 echo "Sample sheet: $SHEET"
 echo "Output directory: $OUTDIR"
 
-nextflow run http://github.com/nf-core/sarek \
+nextflow run nf-core/sarek \
     -r 3.10.0 \
     -profile apptainer \
     --input $SHEET \
     --outdir "$OUTDIR" \
+    --igenomes_base "$R_DIR" \
     --genome GATK.GRCh38 \
-    --tools "Manta" \
+    --tools "manta" \
     -work-dir "$P_DIR/work" \
     -c "$P_DIR/custom.config"
 
