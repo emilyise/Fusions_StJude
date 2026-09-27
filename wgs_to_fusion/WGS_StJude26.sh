@@ -46,6 +46,7 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 ###############################################################################
 ############ LOAD MODULES #####################################################
+module unload java
 module use /projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/easybuild/software/modules
 module load Core/nextflow/26.04.6
 nextflow -version
@@ -67,7 +68,8 @@ nextflow run nf-core/sarek \
     --genome GATK.GRCh38 \
     --tools "manta" \
     -work-dir "$P_DIR/work" \
-    -c "$P_DIR/custom.config"
+    -c "$P_DIR/custom.config" \
+    -resume 063d20fc-7b42-4581-ba63-91c261d3cd56
 
 ###############################################################################
 ############ OPTIONAL CLEANUP #################################################
