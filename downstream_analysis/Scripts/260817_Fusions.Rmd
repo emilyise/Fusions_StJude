@@ -4,6 +4,7 @@ output: html_document
 date: "2026-08-17"
 ---
 
+# Just Ewing for Now
 
 ```{r Setup}
 set.seed(5014)
@@ -20,7 +21,7 @@ library(data.table)
 # Loading Files 
 ###############################
 # load metadata
-mymeta <- read.csv("../../SAMPLE_INFO.csv")
+mymeta <- read.csv("../../rnaseq_to_fusion/SAMPLE_INFO.csv")
 
 mymeta %<>%
   # subset to RNA-seq
@@ -44,8 +45,8 @@ ews_sample_ids <- unique(p.meta$sample_name)
 
 #####
 # get arriba fusion files
-a.fus <- c(list.files("../../results/arriba/", full.names = T), 
-           c(list.files("../../results2/arriba/", full.names = T)))
+a.fus <- c(list.files("../../rnaseq_to_fusion/results/arriba/", full.names = T), 
+           c(list.files("../../rnaseq_to_fusion/results2/arriba/", full.names = T)))
 
 a.fus <- a.fus[-c(grep("discarded", a.fus))]
 all.a.fus <- unlist(lapply(a.fus, function(x) {
@@ -67,8 +68,8 @@ names(ar.list) <- ids
 
 #####
 # get starfusion files 
-s.fus <- c(list.files("../../results/starfusion/", full.names = T), 
-           c(list.files("../../results2/starfusion/", full.names = T)))
+s.fus <- c(list.files("../../rnaseq_to_fusion/results/starfusion/", full.names = T), 
+           c(list.files("../../rnaseq_to_fusion/results2/starfusion/", full.names = T)))
 
 s.fus <- s.fus[c(grep("abridged", s.fus))]
 all.s.fus <- unlist(lapply(s.fus, function(x) {
@@ -226,6 +227,16 @@ ggplot(data = plot.df, aes(y = subject_name,
 #                                      margin = margin(r = 5)),
 #       axis.text.y = element_blank())
 ```
+
+
+```{r}
+###############################
+# Identify Fusion Type (Balanced vs Complex)
+###############################
+
+
+```
+
 
 
 ```{r}

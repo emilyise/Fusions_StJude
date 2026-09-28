@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time=24:00:00
+#SBATCH --time=10:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=4
@@ -68,8 +68,7 @@ nextflow run nf-core/sarek \
     --genome GATK.GRCh38 \
     --tools "manta" \
     -work-dir "$P_DIR/work" \
-    -c "$P_DIR/custom.config" \
-    -resume 063d20fc-7b42-4581-ba63-91c261d3cd56
+    -c "$P_DIR/custom.config"
 
 ###############################################################################
 ############ OPTIONAL CLEANUP #################################################

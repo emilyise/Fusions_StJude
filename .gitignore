@@ -5,8 +5,7 @@
 /easybuild/
 
 # Data 
-*BAMS
-*BAMS2
+*BAMS*
 *sample_input.csv
 get_data.sh
 /tmp/
