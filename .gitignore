@@ -8,7 +8,7 @@
 *BAMS*
 *sample_input.csv
 get_data.sh
-/tmp/
+*tmp*
 /downstream_analysis/Figures/
 *.txt
 *chunks*
