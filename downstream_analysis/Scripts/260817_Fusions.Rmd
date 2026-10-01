@@ -5,7 +5,9 @@ date: "2026-08-17"
 ---
 
 # Just Ewing for Now
+# find one for diagnosis and recurrence/ metastasis and see if they are different
 
+Loading
 ```{r Setup}
 set.seed(5014)
 
@@ -16,6 +18,10 @@ library(ggplot2)
 library(tidyverse)
 library(magrittr)
 library(data.table)
+install.packages("remotes")
+remotes::install_github("lvulliard/BioCircos.R", dependencies = TRUE)
+library(BioCircos)
+library(htmlwidgets)
 
 ###############################
 # Loading Files 
@@ -92,11 +98,11 @@ names(sr.list) <- ids
 ###############################
 # Set Colors
 ###############################
-cols_recip <- "firebrick"
-cols_can <- "steelblue"
+cols_recip <- "#C77C8B"
+cols_can <- "#7B9E87"
 ```
 
-
+Identify Recips
 ```{r Identify Recips}
 ###############################
 # Arriba - Find Reciprocals
@@ -138,7 +144,6 @@ ews.a.pairs <- a.pairs %>%
 length(unique(unlist(lapply(ews.a.pairs$sample_name, 
                             function(x) str_split_1(x, "_")[[1]][1]))))
 ```
-
 
 ```{r}
 ###############################
@@ -208,18 +213,35 @@ ggplot(data = plot.df, aes(y = subject_name,
                                      margin = margin(r = 5)),
       axis.text.y = element_blank())
 
-# # also considering looking at this without summarizing each patient and 
+ggsave("../Figures/FusionComposition.png", bg = "white", width = 8, height = 4)
+
+# # also considering looking at this without summarizing each patient and
 # # faceting on stage (D, R, A, X even maybe)
-# ggplot(data = plot.df, aes(y = sample_name, 
+# plot.df <- just.e.fus %>%
+#   select(sample_name, subject_name, s.reads, r.reads, has_recip) %>%
+#   # get only unique combos (this is possible because r.reads and s.reads are 
+#   # already summarized data)
+#   unique() %>%
+#   group_by(subject_name) %>%
+#   # summarize further by grouping by subject and taking the mean, so that 
+#   # patients with multiple samples aren't over represented
+#   mutate(mr.reads = mean(r.reads),
+#          ms.reads = mean(s.reads)) %>%
+#   ungroup() %>%
+#   # then go in and rm the extra data to make sure to plot the right thing 
+#   select(-c(s.reads, r.reads, sample_name, has_recip)) %>%
+#   unique() %>%
+#   arrange(desc(ms.reads)) %>%
+#   mutate(subject_name = factor(subject_name, levels = subject_name))
+# 
+# ggplot(data = plot.df, aes(y = subject_name, 
 #                            fill = has_recip)) +
-#   geom_col(aes(x = total_fusions, fill = Tumor.subtype)) +
-#   geom_col(aes(x = recips), fill = "grey30") + 
-#   facet_grid(Tumor.subtype ~. , scales = "free_y", space = "free_y", switch = "y") +
-#   scale_fill_manual(name = "Sarcoma Subtypes", values = coldex$colors,
-#                      guide = "none") +
+#   geom_col(aes(x = ms.reads), fill = cols_can) +
+#   geom_col(aes(x = mr.reads), fill = cols_recip) + 
+#   facet_grid(Tumor.subtype ~. , scales = "free_y", space = "free_y") +
 #   xlab("Fusion Count") +
 #   ylab("") +
-#   ggtitle("Reciprocal Pairs vs Total Fusions per Patient by Tumor Subtype") +
+#   ggtitle("Average Canonical & Reciprocal Fusions per Patient") +
 #   theme_bw() + 
 #   theme(strip.placement = "outside",
 #         strip.background = element_rect(fill = NA, color = "white"),
@@ -228,15 +250,139 @@ ggplot(data = plot.df, aes(y = subject_name,
 #       axis.text.y = element_blank())
 ```
 
-
+BioCircos For All Samples
 ```{r}
 ###############################
-# Identify Fusion Type (Balanced vs Complex)
+# BioCircos
+###############################
+# going to need this lil guy
+source("../R/pullpos_arriba.R")
+
+# find high medium and low fusion types 
+# NUMBER OF UNIQUE FUSIONS NOT EXPRESSION 
+fusions_summary <- ar.df %>%
+  mutate(fusion = paste(gene1, gene2, sep = ":")) %>%
+  group_by(sample_name) %>%
+  summarise(
+    total_fusions = length(unique(fusion)),
+    recips = sum(has_recip),
+    .groups = "drop") %>%
+  mutate(non_recips = total_fusions - recips) %>%
+  arrange(desc(total_fusions)) %>%
+  rename(sample_id = sample_name)
+
+nofus <- fusions_summary$total_fusions
+low <- fusions_summary$sample_id[which.min(nofus)]
+highdex <- max(nofus)
+high <- fusions_summary$sample_id[which.max(nofus)]
+mid <- fusions_summary$sample_id[which.min(abs(highdex/2 - nofus))]
+tlinks <- c(low,mid,high)
+
+# pull out chr num and pos
+toplot <- lapply(tlinks, function(x) 
+  egi_find_pos(ar.df[which(ar.df$sample_name == x),]))
+
+toplot <- lapply(toplot, function(x) x %<>% 
+                   filter(chr1 %in% 1:22) %>%
+                   filter(chr2 %in% 1:22))
+
+# pick colors 
+somecols <- c("#91AEC4", "#B3A0C5", "#D8B98C")
+
+# write filenames 
+somenames <- c("circos_low", "circos_med", "cicos_high")
+
+# and this one for plotting 
+source("../R/circoslink.R")
+
+# write titles
+mytitles <- c("Fusion Low: n = 1",
+              "Fusion Medium: n = 27",
+              "Fusion High: n = 55")
+
+# plot and save to html (biocircos is cool but annoying for this)
+for (x in seq_along(toplot)) {
+  mycircs <- egi_circoslink(toplot[[x]],
+                            somecols[x],
+                            mytitles[x])
+  
+  saveWidget(widget = mycircs,
+             file = paste0("../Figures/", somenames[x], ".html"),
+                     selfcontained = T)
+}
+
+```
+
+BioCircos For Only Reciprocal Expressing
+```{r}
+###############################
+# BioCircos
+###############################
+# going to need this lil guy
+source("../R/pullpos_arriba.R")
+
+# find high medium and low fusion types 
+# NUMBER OF UNIQUE FUSIONS NOT EXPRESSION 
+recip_fusions_summary <- ar.df %>%
+  filter(sample_name %in%  unique(ews.a.pairs$sample_name)) %>%
+  mutate(fusion = paste(gene1, gene2, sep = ":")) %>%
+  group_by(sample_name) %>% 
+  summarise(
+    total_fusions = length(unique(fusion)),
+    recips = sum(has_recip),
+    .groups = "drop") %>% 
+  arrange(desc(total_fusions)) %>%
+  rename(sample_id = sample_name)
+
+nofus <- recip_fusions_summary$total_fusions
+low <- recip_fusions_summary$sample_id[which.min(nofus)]
+highdex <- max(nofus)
+high <- recip_fusions_summary$sample_id[which.max(nofus)]
+mid <- recip_fusions_summary$sample_id[which.min(abs(highdex/2 - nofus))]
+tlinks <- c(low,mid,high)
+
+# pull out chr num and pos
+toplot <- lapply(tlinks, function(x) 
+  egi_find_pos(ar.df[which(ar.df$sample_name == x),]))
+
+toplot <- lapply(toplot, function(x) x %<>% 
+                   filter(chr1 %in% 1:22) %>%
+                   filter(chr2 %in% 1:22))
+
+# pick colors 
+somecols <- rep(cols_recip, 3)
+
+# write filenames 
+somenames <- c("circos_recip_low", "circos_recip_med", "cicos_recip_high")
+
+# and this one for plotting 
+source("../R/circoslink.R")
+
+# write titles
+mytitles <- c("Fusion Low: n = 6",
+              "Fusion Medium: n = 11",
+              "Fusion High: n = 26")
+
+# plot and save to html (biocircos is cool but annoying for this)
+for (x in seq_along(toplot)) {
+  mycircs <- egi_circoslink(toplot[[x]],
+                            somecols[x],
+                            mytitles[x])
+  
+  saveWidget(widget = mycircs,
+             file = paste0("../Figures/", somenames[x], ".html"),
+                     selfcontained = T)
+}
+```
+
+Fusion Type (get from WGS)
+```{r}
+###############################
+# Pull Fusion Type (Balanced vs Complex)
 ###############################
 
 
 ```
-
 
 
 ```{r}

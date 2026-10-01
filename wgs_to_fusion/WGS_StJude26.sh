@@ -20,7 +20,7 @@ set -euo pipefail
 P_DIR="/projects/rpci/joyceohm/Emily/2026_Fusions_St_Jude/wgs_to_fusion"
 
 # Reference storage 
-R_DIR="/vscratch/grp-joyceohm/igenomes"
+R_DIR="/projects/rpci/joyceohm/Shared_References/igenomes"
 
 # Batch sample sheet
 SHEET="${P_DIR}/STJude26_wgs_sample_input.csv"
