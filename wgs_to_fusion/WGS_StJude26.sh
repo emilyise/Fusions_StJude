@@ -70,7 +70,8 @@ nextflow run nf-core/sarek \
     --genome GATK.GRCh38 \
     --tools "manta" \
     -work-dir "$P_DIR/work" \
-    -c "$P_DIR/custom.config"
+    -c "$P_DIR/custom.config" \
+    -resume ee6abf4c-3590-49a9-bf14-1b85e7a7384b
 
 ###############################################################################
 ############ OPTIONAL CLEANUP #################################################
